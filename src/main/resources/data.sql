@@ -1,0 +1,2 @@
+INSERT INTO videos (titulo, descricao, url) VALUES ('Video de teste', 'Primeiro teste', 'http://www.dw.com');
+INSERT INTO videos (titulo, descricao, url) VALUES ('Teste 2', 'Segundo teste', 'http://www.pudim.com.br');
