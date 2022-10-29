@@ -5,7 +5,6 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
 import naimaier.aluraflix.model.Video;
-import naimaier.aluraflix.repository.VideoRepository;
 
 public class VideoForm {
 
@@ -46,8 +45,7 @@ public class VideoForm {
 		return video;
 	}
 	
-	public Video update(Long id, VideoRepository videoRepository) {
-		Video video = videoRepository.getReferenceById(id);
+	public Video update(Video video) {
 		
 		video.setTitulo(titulo);
 		video.setDescricao(descricao);

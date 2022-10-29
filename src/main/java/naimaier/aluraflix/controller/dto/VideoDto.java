@@ -1,7 +1,6 @@
 package naimaier.aluraflix.controller.dto;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 import naimaier.aluraflix.model.Video;
 
@@ -35,9 +34,7 @@ public class VideoDto {
 		return url;
 	}
 
-	public static List<VideoDto> convert(List<Video> videos) {
-		return videos.stream()
-				.map(VideoDto::new)
-				.collect(Collectors.toList());
+	public static Page<VideoDto> convert(Page<Video> videos) {
+		return videos.map(VideoDto::new);
 	}
 }

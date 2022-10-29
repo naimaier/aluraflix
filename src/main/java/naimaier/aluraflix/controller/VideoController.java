@@ -1,14 +1,14 @@
 package naimaier.aluraflix.controller;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import naimaier.aluraflix.controller.dto.VideoDto;
 import naimaier.aluraflix.controller.form.VideoForm;
+import naimaier.aluraflix.exception.VideoNotFoundException;
 import naimaier.aluraflix.model.Video;
 import naimaier.aluraflix.repository.VideoRepository;
 
@@ -35,18 +35,21 @@ public class VideoController {
 
 	
 	@GetMapping
-	public List<VideoDto> getAll() {
-		return VideoDto.convert(videoRepository.findAll());
+	public Page<VideoDto> getAll(Pageable pageable) {
+		
+		Page<Video> videos = videoRepository.findAll(pageable);
+		
+		return VideoDto.convert(videos);
 	}
 	
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<VideoDto> getById(@PathVariable Long id) {
-		Optional<Video> videoOptional = videoRepository.findById(id);
+	public ResponseEntity<VideoDto> getById(
+			@PathVariable("id") Optional<Video> videoOptional) {
 		
 		return videoOptional
 				.map(video -> ResponseEntity.ok(new VideoDto(video)))
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
+				.orElseThrow(VideoNotFoundException::new);
 	}
 	
 	
@@ -72,31 +75,28 @@ public class VideoController {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<VideoDto> update(
-			@PathVariable Long id,
+			@PathVariable("id") Optional<Video> videoOptional,
 			@Valid @RequestBody VideoForm videoForm) {
-		
-		Optional<Video> videoOptional = videoRepository.findById(id);
 		
 		return videoOptional
 				.map(video -> {
-					Video updatedVideo = videoForm.update(id, videoRepository);
+					Video updatedVideo = videoForm.update(video);
 					return ResponseEntity.ok(new VideoDto(updatedVideo));
 				})
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
+				.orElseThrow(VideoNotFoundException::new);
 	}
 	
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<?> delete(@PathVariable Long id){
-		
-		Optional<Video> videoOptional = videoRepository.findById(id);
+	public ResponseEntity<?> delete(
+			@PathVariable("id") Optional<Video> videoOptional){
 		
 		return videoOptional
 				.map(video -> {
-					videoRepository.deleteById(id);
-					return ResponseEntity.ok().build();
+					videoRepository.deleteById(video.getId());
+					return ResponseEntity.noContent().build();
 				})
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não encontrado"));
+				.orElseThrow(VideoNotFoundException::new);
 	}
 }
