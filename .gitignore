@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+data.sql
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,eclipse,maven,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,eclipse,maven,java
