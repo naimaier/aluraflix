@@ -7,25 +7,24 @@ import naimaier.aluraflix.model.Categoria;
 public class CategoriaDto {
 
 	private Long id;
-	private String nome;
+	private String titulo;
+	private String cor;
 	
 	public CategoriaDto(Categoria categoria) {
 		this.id = categoria.getId();
-		this.nome = categoria.getNome();
+		this.titulo = categoria.getTitulo();
+		this.cor = categoria.getCor();
 	}
+	
 	public Long getId() {
 		return id;
 	}
-	public void setId(Long id) {
-		this.id = id;
+	public String getTitulo() {
+		return titulo;
 	}
-	public String getNome() {
-		return nome;
+	public String getCor() {
+		return cor;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	
 	public static Page<CategoriaDto> convert(Page<Categoria> categorias) {
 		return categorias.map(CategoriaDto::new);
 	}
