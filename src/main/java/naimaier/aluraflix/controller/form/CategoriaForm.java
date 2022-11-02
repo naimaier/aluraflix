@@ -32,4 +32,9 @@ public class CategoriaForm {
 		
 		return categoria;
 	}
+	
+	public void update(Categoria categoria) {
+		categoria.setTitulo(titulo);
+		categoria.setCor(cor);
+	}
 }

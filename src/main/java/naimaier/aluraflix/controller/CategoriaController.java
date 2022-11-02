@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,5 +69,20 @@ public class CategoriaController {
 		return ResponseEntity
 				.created(uri)
 				.body(new CategoriaDto(savedItem));
+	}
+	
+	
+	@PutMapping("{id}")
+	@Transactional
+	public ResponseEntity<CategoriaDto> update(
+			@PathVariable("id") Optional<Categoria> categoriaOptional,
+			@Valid @RequestBody CategoriaForm categoriaForm){
+		
+		return categoriaOptional
+				.map(categoria -> {
+					categoriaForm.update(categoria);
+					return ResponseEntity.ok(new CategoriaDto(categoria));
+				})
+				.orElseThrow(CategoryNotFoundException::new);
 	}
 }
