@@ -1,9 +1,12 @@
 package naimaier.aluraflix.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +18,9 @@ public class Categoria {
 	private Long id;
 	private String titulo;
 	private String cor;
+	
+	@OneToMany(mappedBy = "categoria")
+	private List<Video> videos;
 	
 	public Long getId() {
 		return id;
@@ -33,5 +39,11 @@ public class Categoria {
 	}
 	public void setCor(String cor) {
 		this.cor = cor;
+	}
+	public List<Video> getVideos() {
+		return videos;
+	}
+	public void setVideos(List<Video> videos) {
+		this.videos = videos;
 	}
 }
