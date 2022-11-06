@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import naimaier.aluraflix.controller.dto.CategoriaDto;
 import naimaier.aluraflix.controller.form.CategoriaForm;
+import naimaier.aluraflix.exception.CategoryNotEmptyException;
 import naimaier.aluraflix.exception.CategoryNotFoundException;
 import naimaier.aluraflix.model.Categoria;
 import naimaier.aluraflix.repository.CategoriaRepository;
@@ -72,7 +74,7 @@ public class CategoriaController {
 	}
 	
 	
-	@PutMapping("{id}")
+	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<CategoriaDto> update(
 			@PathVariable("id") Optional<Categoria> categoriaOptional,
@@ -82,6 +84,22 @@ public class CategoriaController {
 				.map(categoria -> {
 					categoriaForm.update(categoria);
 					return ResponseEntity.ok(new CategoriaDto(categoria));
+				})
+				.orElseThrow(CategoryNotFoundException::new);
+	}
+	
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<?> delete(
+			@PathVariable("id") Optional<Categoria> categoriaOptional) {
+		
+		return categoriaOptional
+				.map(categoria -> {
+					if (!categoria.getVideos().isEmpty()) throw new CategoryNotEmptyException();
+					
+					categoriaRepository.deleteById(categoria.getId());
+					return ResponseEntity.noContent().build();
 				})
 				.orElseThrow(CategoryNotFoundException::new);
 	}
