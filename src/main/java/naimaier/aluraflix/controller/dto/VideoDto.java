@@ -2,23 +2,22 @@ package naimaier.aluraflix.controller.dto;
 
 import org.springframework.data.domain.Page;
 
-import naimaier.aluraflix.model.Categoria;
 import naimaier.aluraflix.model.Video;
 
 public class VideoDto {
 
 	private Long id;
+	private Long categoriaId;
 	private String titulo;
 	private String descricao;
 	private String url;
-	private Categoria categoria;
 	
 	public VideoDto(Video video) {
 		this.id = video.getId();
 		this.titulo = video.getTitulo();
 		this.descricao = video.getDescricao();
 		this.url = video.getUrl();
-		this.categoria = video.getCategoria();
+		this.categoriaId = video.getCategoria().getId();
 	}
 
 	public Long getId() {
@@ -37,8 +36,8 @@ public class VideoDto {
 		return url;
 	}
 
-	public Categoria getCategoria() {
-		return categoria;
+	public Long getCategoriaId() {
+		return categoriaId;
 	}
 
 	public static Page<VideoDto> convert(Page<Video> videos) {
