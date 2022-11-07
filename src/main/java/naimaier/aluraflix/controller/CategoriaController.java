@@ -26,6 +26,7 @@ import naimaier.aluraflix.exception.CategoryNotEmptyException;
 import naimaier.aluraflix.exception.CategoryNotFoundException;
 import naimaier.aluraflix.model.Categoria;
 import naimaier.aluraflix.repository.CategoriaRepository;
+import naimaier.aluraflix.repository.VideoRepository;
 
 @RestController
 @RequestMapping("/categorias")
@@ -33,6 +34,9 @@ public class CategoriaController {
 
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	
+	@Autowired
+	private VideoRepository videoRepository;
 	
 	
 	@GetMapping
@@ -96,7 +100,7 @@ public class CategoriaController {
 		
 		return categoriaOptional
 				.map(categoria -> {
-					if (!categoria.getVideos().isEmpty()) throw new CategoryNotEmptyException();
+					if (videoRepository.existsByCategoria(categoria)) throw new CategoryNotEmptyException();
 					
 					categoriaRepository.deleteById(categoria.getId());
 					return ResponseEntity.noContent().build();
