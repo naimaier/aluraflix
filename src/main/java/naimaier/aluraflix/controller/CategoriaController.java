@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import naimaier.aluraflix.controller.dto.CategoriaDto;
+import naimaier.aluraflix.controller.dto.VideoDto;
 import naimaier.aluraflix.controller.form.CategoriaForm;
 import naimaier.aluraflix.exception.CategoryNotEmptyException;
 import naimaier.aluraflix.exception.CategoryNotFoundException;
 import naimaier.aluraflix.model.Categoria;
+import naimaier.aluraflix.model.Video;
 import naimaier.aluraflix.repository.CategoriaRepository;
 import naimaier.aluraflix.repository.VideoRepository;
 
@@ -106,5 +108,20 @@ public class CategoriaController {
 					return ResponseEntity.noContent().build();
 				})
 				.orElseThrow(CategoryNotFoundException::new);
+	}
+	
+	
+	@GetMapping("/{id}/videos")
+	public Page<VideoDto> getByCategory(
+			@PathVariable("id") Optional<Categoria> categoriaOptional,
+			Pageable pageable){
+		
+		return categoriaOptional
+				.map(categoria -> { 
+					Page<Video> categorias = videoRepository.findByCategoria(categoria, pageable);
+					return VideoDto.convert(categorias);
+				})
+				.orElseThrow(CategoryNotFoundException::new);
+		
 	}
 }
