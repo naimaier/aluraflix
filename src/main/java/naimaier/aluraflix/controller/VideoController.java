@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -35,9 +36,17 @@ public class VideoController {
 
 	
 	@GetMapping
-	public Page<VideoDto> getAll(Pageable pageable) {
+	public Page<VideoDto> getVideos(
+			@RequestParam(required = false) String search,
+			Pageable pageable) {
 		
-		Page<Video> videos = videoRepository.findAll(pageable);
+		Page<Video> videos;
+		
+		if (search == null) {
+			videos = videoRepository.findAll(pageable);			
+		} else {
+			videos = videoRepository.findByTituloContainsIgnoreCase(search, pageable);
+		}
 		
 		return VideoDto.convert(videos);
 	}

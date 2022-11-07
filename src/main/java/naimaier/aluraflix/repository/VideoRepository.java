@@ -11,4 +11,5 @@ public interface VideoRepository extends JpaRepository<Video, Long>{
 	
 	boolean existsByCategoria(Categoria categoria);
 	Page<Video> findByCategoria(Categoria categoria, Pageable pageable);
+	Page<Video> findByTituloContainsIgnoreCase(String search, Pageable pageable);
 }
