@@ -6,9 +6,9 @@ import naimaier.aluraflix.model.Categoria;
 
 public class CategoriaForm {
 
-	@NotEmpty
+	@NotEmpty(message = "O campo 'título' é obrigatório")
 	private String titulo;
-	@NotEmpty
+	@NotEmpty(message = "O campo 'cor' é obrigatório")
 	private String cor;
 	
 	public String getTitulo() {
