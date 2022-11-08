@@ -3,6 +3,7 @@ package naimaier.aluraflix.controller;
 import java.net.URI;
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -23,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import naimaier.aluraflix.controller.dto.CategoriaDto;
 import naimaier.aluraflix.controller.dto.VideoDto;
 import naimaier.aluraflix.controller.form.CategoriaForm;
+import naimaier.aluraflix.exception.CategoryNotEditableException;
 import naimaier.aluraflix.exception.CategoryNotEmptyException;
 import naimaier.aluraflix.exception.CategoryNotFoundException;
 import naimaier.aluraflix.model.Categoria;
@@ -39,6 +41,18 @@ public class CategoriaController {
 	
 	@Autowired
 	private VideoRepository videoRepository;
+	
+	
+	@PostConstruct
+	public void init() {
+		if (categoriaRepository.count() != 0) return;
+		
+		Categoria categoria = new Categoria();
+		categoria.setTitulo("Livre");
+		categoria.setCor("#FFF");
+		
+		categoriaRepository.save(categoria);
+	}
 	
 	
 	@GetMapping
@@ -88,6 +102,8 @@ public class CategoriaController {
 		
 		return categoriaOptional
 				.map(categoria -> {
+					if (categoria.getId() == 1l) throw new CategoryNotEditableException();
+					
 					categoriaForm.update(categoria);
 					return ResponseEntity.ok(new CategoriaDto(categoria));
 				})
@@ -102,6 +118,7 @@ public class CategoriaController {
 		
 		return categoriaOptional
 				.map(categoria -> {
+					if (categoria.getId() == 1l) throw new CategoryNotEditableException();
 					if (videoRepository.existsByCategoria(categoria)) throw new CategoryNotEmptyException();
 					
 					categoriaRepository.deleteById(categoria.getId());

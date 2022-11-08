@@ -25,6 +25,7 @@ import naimaier.aluraflix.controller.dto.VideoDto;
 import naimaier.aluraflix.controller.form.VideoForm;
 import naimaier.aluraflix.exception.VideoNotFoundException;
 import naimaier.aluraflix.model.Video;
+import naimaier.aluraflix.repository.CategoriaRepository;
 import naimaier.aluraflix.repository.VideoRepository;
 
 @RestController
@@ -33,6 +34,9 @@ public class VideoController {
 	
 	@Autowired
 	private VideoRepository videoRepository;
+	
+	@Autowired
+	private CategoriaRepository categoriaRepository;
 
 	
 	@GetMapping
@@ -68,7 +72,7 @@ public class VideoController {
 			@Valid @RequestBody VideoForm videoForm, 
 			UriComponentsBuilder uriBuilder) {
 		
-		Video video = videoRepository.save(videoForm.toVideo());
+		Video video = videoRepository.save(videoForm.toVideo(categoriaRepository));
 		
 		URI uri = uriBuilder
 				.path("/videos/{id}")
@@ -89,7 +93,7 @@ public class VideoController {
 		
 		return videoOptional
 				.map(video -> {
-					Video updatedVideo = videoForm.update(video);
+					Video updatedVideo = videoForm.update(video, categoriaRepository);
 					return ResponseEntity.ok(new VideoDto(updatedVideo));
 				})
 				.orElseThrow(VideoNotFoundException::new);
